@@ -1,0 +1,58 @@
+{
+  "expo": {
+    "name": "EcoSalud",
+    "slug": "EcoSalud",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/logo2.png",
+    "scheme": "ecosalud",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.jancarlos.ecosalud",
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/images/logo2.png",
+        "monochromeImage": "./assets/images/logo2.png"
+      },
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/logo2.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#1E5FA8",
+          "dark": {
+            "backgroundColor": "#1E5FA8"
+          }
+        }
+      ],
+      "@react-native-community/datetimepicker",
+      "expo-asset",
+      "expo-web-browser",
+      "expo-font"
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "9bfec09b-d7fc-4be5-9c74-acc929950ece"
+      }
+    }
+  }
+}
