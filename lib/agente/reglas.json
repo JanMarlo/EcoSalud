@@ -1,0 +1,284 @@
+{
+  "version": "1.0.0",
+  "reglas": [
+    {
+      "id": "SV-01",
+      "nombre": "Fiebre",
+      "grupo": "signos_vitales",
+      "prioridad": "media",
+      "condicion": { "hecho": "temperatura", "operador": "entre", "valor": [38.0, 39.5] },
+      "mensaje": "La temperatura está en rango de fiebre.",
+      "recomendacion": "Revisar posibles focos infecciosos y registrar la evolución de la temperatura.",
+      "seguimientoDias": null,
+      "fuente": "Valor de referencia para prototipo; pendiente de validación médica"
+    },
+    {
+      "id": "SV-02",
+      "nombre": "Fiebre alta",
+      "grupo": "signos_vitales",
+      "prioridad": "alta",
+      "condicion": { "hecho": "temperatura", "operador": ">=", "valor": 39.5 },
+      "mensaje": "La temperatura es igual o mayor a 39.5 °C.",
+      "recomendacion": "Valorar de inmediato el estado general del paciente.",
+      "seguimientoDias": null,
+      "fuente": "Valor de referencia para prototipo; pendiente de validación médica"
+    },
+    {
+      "id": "SV-03",
+      "nombre": "Hipotermia",
+      "grupo": "signos_vitales",
+      "prioridad": "alta",
+      "condicion": { "hecho": "temperatura", "operador": "<", "valor": 35.0 },
+      "mensaje": "La temperatura está por debajo de 35 °C.",
+      "recomendacion": "Confirmar la medición y valorar de inmediato.",
+      "seguimientoDias": null,
+      "fuente": "Valor de referencia para prototipo; pendiente de validación médica"
+    },
+    {
+      "id": "SV-04",
+      "nombre": "Fiebre en lactante",
+      "grupo": "signos_vitales",
+      "prioridad": "alta",
+      "aplicaA": { "edadMaximaMeses": 2 },
+      "condicion": { "hecho": "temperatura", "operador": ">=", "valor": 38.0 },
+      "suprime": ["SV-01", "SV-02"],
+      "mensaje": "Fiebre en un paciente menor de 3 meses.",
+      "recomendacion": "Valorar de inmediato; en lactantes la fiebre requiere revisión prioritaria.",
+      "seguimientoDias": null,
+      "fuente": "Valor de referencia para prototipo; pendiente de validación médica"
+    },
+    {
+      "id": "SV-05",
+      "nombre": "Presión elevada",
+      "grupo": "signos_vitales",
+      "prioridad": "media",
+      "aplicaA": { "edadMinimaMeses": 216 },
+      "condicion": {
+        "cualquiera": [
+          { "hecho": "sistolica", "operador": "entre", "valor": [140, 180] },
+          { "hecho": "diastolica", "operador": "entre", "valor": [90, 120] }
+        ]
+      },
+      "mensaje": "La presión arterial está por encima del rango esperado.",
+      "recomendacion": "Repetir la medición en reposo y dar seguimiento a la presión arterial.",
+      "seguimientoDias": 14,
+      "fuente": "Valor de referencia para prototipo; pendiente de validación médica"
+    },
+    {
+      "id": "SV-06",
+      "nombre": "Presión muy elevada",
+      "grupo": "signos_vitales",
+      "prioridad": "alta",
+      "aplicaA": { "edadMinimaMeses": 216 },
+      "condicion": {
+        "cualquiera": [
+          { "hecho": "sistolica", "operador": ">=", "valor": 180 },
+          { "hecho": "diastolica", "operador": ">=", "valor": 120 }
+        ]
+      },
+      "suprime": ["SV-05"],
+      "mensaje": "La presión arterial alcanza valores muy elevados.",
+      "recomendacion": "Confirmar la medición y valorar de inmediato.",
+      "seguimientoDias": null,
+      "fuente": "Valor de referencia para prototipo; pendiente de validación médica"
+    },
+    {
+      "id": "SV-07",
+      "nombre": "Presión baja",
+      "grupo": "signos_vitales",
+      "prioridad": "media",
+      "aplicaA": { "edadMinimaMeses": 216 },
+      "condicion": {
+        "cualquiera": [
+          { "hecho": "sistolica", "operador": "<", "valor": 90 },
+          { "hecho": "diastolica", "operador": "<", "valor": 60 }
+        ]
+      },
+      "mensaje": "La presión arterial está por debajo del rango esperado.",
+      "recomendacion": "Revisar síntomas asociados como mareo o desmayo y repetir la medición.",
+      "seguimientoDias": null,
+      "fuente": "Valor de referencia para prototipo; pendiente de validación médica"
+    },
+    {
+      "id": "SV-08",
+      "nombre": "IMC fuera de rango",
+      "grupo": "signos_vitales",
+      "prioridad": "baja",
+      "aplicaA": { "edadMinimaMeses": 216 },
+      "condicion": {
+        "cualquiera": [
+          { "hecho": "imc", "operador": "<", "valor": 18.5 },
+          { "hecho": "imc", "operador": ">=", "valor": 30 }
+        ]
+      },
+      "mensaje": "El índice de masa corporal está fuera del rango esperado.",
+      "recomendacion": "Considerar orientación nutricional y seguimiento del peso.",
+      "seguimientoDias": 30,
+      "fuente": "Clasificación de IMC de la OMS para adultos"
+    },
+    {
+      "id": "CS-01",
+      "nombre": "Dolor torácico con irradiación o disnea",
+      "grupo": "combinacion_sintomas",
+      "prioridad": "alta",
+      "condicion": {
+        "todas": [
+          { "hecho": "sintomas", "operador": "contiene", "valor": "dolor_pecho" },
+          { "hecho": "sintomas", "operador": "contieneAlguno", "valor": ["dolor_irradiado_brazo", "dificultad_respirar"] }
+        ]
+      },
+      "mensaje": "Dolor en el pecho acompañado de irradiación al brazo o dificultad para respirar.",
+      "recomendacion": "Valorar de inmediato; considerar evaluación cardiovascular.",
+      "seguimientoDias": null,
+      "fuente": "Pendiente de validación médica"
+    },
+    {
+      "id": "CS-02",
+      "nombre": "Síntomas neurológicos de alarma",
+      "grupo": "combinacion_sintomas",
+      "prioridad": "alta",
+      "condicion": {
+        "hecho": "sintomas",
+        "operador": "contieneAlguno",
+        "valor": ["convulsiones", "desmayo", "alteracion_del_habla", "confusion"]
+      },
+      "mensaje": "Se registró al menos un síntoma neurológico de alarma.",
+      "recomendacion": "Valorar de inmediato el estado neurológico del paciente.",
+      "seguimientoDias": null,
+      "fuente": "Pendiente de validación médica"
+    },
+    {
+      "id": "CS-03",
+      "nombre": "Sangrado relevante",
+      "grupo": "combinacion_sintomas",
+      "prioridad": "alta",
+      "condicion": {
+        "hecho": "sintomas",
+        "operador": "contieneAlguno",
+        "valor": ["expectoracion_con_sangre", "heces_oscuras", "sangrado_rectal", "sangrado_urinario"]
+      },
+      "mensaje": "Se registró un síntoma de sangrado.",
+      "recomendacion": "Valorar el origen y la cantidad del sangrado durante la consulta.",
+      "seguimientoDias": null,
+      "fuente": "Pendiente de validación médica"
+    },
+    {
+      "id": "CS-04",
+      "nombre": "Fiebre con síntomas respiratorios",
+      "grupo": "combinacion_sintomas",
+      "prioridad": "media",
+      "condicion": {
+        "todas": [
+          {
+            "cualquiera": [
+              { "hecho": "sintomas", "operador": "contiene", "valor": "fiebre" },
+              { "hecho": "temperatura", "operador": ">=", "valor": 38.0 }
+            ]
+          },
+          { "hecho": "sintomas", "operador": "contieneAlguno", "valor": ["tos_seca", "tos_con_flema", "dolor_al_respirar"] }
+        ]
+      },
+      "mensaje": "Fiebre junto con síntomas respiratorios.",
+      "recomendacion": "Revisar vías respiratorias y considerar valorar la saturación de oxígeno.",
+      "seguimientoDias": 7,
+      "fuente": "Pendiente de validación médica"
+    },
+    {
+      "id": "CS-05",
+      "nombre": "Fiebre con dificultad respiratoria",
+      "grupo": "combinacion_sintomas",
+      "prioridad": "alta",
+      "condicion": {
+        "todas": [
+          {
+            "cualquiera": [
+              { "hecho": "sintomas", "operador": "contiene", "valor": "fiebre" },
+              { "hecho": "temperatura", "operador": ">=", "valor": 38.0 }
+            ]
+          },
+          { "hecho": "sintomas", "operador": "contieneAlguno", "valor": ["dificultad_respirar", "cianosis"] }
+        ]
+      },
+      "suprime": ["CS-04"],
+      "mensaje": "Fiebre junto con dificultad para respirar o cianosis.",
+      "recomendacion": "Valorar de inmediato la función respiratoria.",
+      "seguimientoDias": null,
+      "fuente": "Pendiente de validación médica"
+    },
+    {
+      "id": "CS-06",
+      "nombre": "Riesgo de deshidratación",
+      "grupo": "combinacion_sintomas",
+      "prioridad": "media",
+      "condicion": {
+        "cualquiera": [
+          { "hecho": "sintomas", "operador": "contiene", "valor": "deshidratacion" },
+          {
+            "todas": [
+              { "hecho": "sintomas", "operador": "contiene", "valor": "vomitos" },
+              { "hecho": "sintomas", "operador": "contiene", "valor": "diarrea" }
+            ]
+          }
+        ]
+      },
+      "mensaje": "Síntomas compatibles con pérdida de líquidos.",
+      "recomendacion": "Valorar el estado de hidratación del paciente.",
+      "seguimientoDias": 3,
+      "fuente": "Pendiente de validación médica"
+    },
+    {
+      "id": "HS-01",
+      "nombre": "Síntoma recurrente",
+      "grupo": "historial",
+      "prioridad": "media",
+      "condicion": { "hecho": "sintomasRecurrentes", "operador": "noVacio" },
+      "mensaje": "Uno o más síntomas aparecen en 3 o más consultas de los últimos 90 días.",
+      "recomendacion": "Revisar la evolución del síntoma y si el manejo actual ha sido efectivo.",
+      "seguimientoDias": 30,
+      "fuente": "Criterio de seguimiento del prototipo"
+    },
+    {
+      "id": "HS-02",
+      "nombre": "Fiebre persistente",
+      "grupo": "historial",
+      "prioridad": "media",
+      "condicion": {
+        "todas": [
+          { "hecho": "temperatura", "operador": ">=", "valor": 38.0 },
+          { "hecho": "fiebrePersistente", "operador": "==", "valor": true }
+        ]
+      },
+      "mensaje": "Hubo fiebre en esta consulta y en la anterior, con 7 días o menos de diferencia.",
+      "recomendacion": "Revisar la falta de mejoría respecto a la consulta anterior.",
+      "seguimientoDias": 3,
+      "fuente": "Criterio de seguimiento del prototipo"
+    },
+    {
+      "id": "HS-03",
+      "nombre": "Cambio de peso relevante",
+      "grupo": "historial",
+      "prioridad": "media",
+      "condicion": { "hecho": "variacionPesoPct", "operador": ">=", "valor": 5 },
+      "mensaje": "El peso cambió 5 % o más respecto a la consulta anterior (últimos 180 días).",
+      "recomendacion": "Confirmar si el cambio de peso fue intencional y revisar su causa.",
+      "seguimientoDias": 30,
+      "fuente": "Criterio de seguimiento del prototipo"
+    },
+    {
+      "id": "HS-04",
+      "nombre": "Presión elevada repetida",
+      "grupo": "historial",
+      "prioridad": "baja",
+      "condicion": {
+        "todas": [
+          { "cualquiera": [{ "regla": "SV-05" }, { "regla": "SV-06" }] },
+          { "hecho": "presionElevadaAnterior", "operador": "==", "valor": true }
+        ]
+      },
+      "mensaje": "La presión arterial estuvo elevada en esta consulta y en la anterior.",
+      "recomendacion": "Programar seguimiento de presión arterial.",
+      "seguimientoDias": 14,
+      "fuente": "Criterio de seguimiento del prototipo"
+    }
+  ]
+}
