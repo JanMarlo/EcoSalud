@@ -1,10 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useFocusEffect } from "@react-navigation/native";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { getAuth } from "firebase/auth";
 import { addDoc, collection, getDocs, onSnapshot, query, where } from "firebase/firestore";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Alert,
   Dimensions,
@@ -169,15 +169,32 @@ export default function CrearCita() {
     ),
   ];
 
+  // 🤖 Seguimiento sugerido por el agente: precarga paciente, fecha y motivo
+  const params = useLocalSearchParams();
+  const pacienteSugerido = typeof params.pacienteId === "string" ? params.pacienteId : "";
+  const fechaSugerida = typeof params.fecha === "string" ? params.fecha : "";
+  const motivoSugerido = typeof params.motivo === "string" ? params.motivo : "";
+  const precargadoRef = useRef("");
+
   useFocusEffect(
   useCallback(() => {
     setPacienteSeleccionado(null);
     setBusqueda("");
-    setFecha("");
+    setFecha(fechaSugerida);
     setHora(new Date());
-    setMotivo("");
-  }, [])
+    setMotivo(motivoSugerido);
+    precargadoRef.current = "";
+  }, [fechaSugerida, motivoSugerido])
   );
+
+  useEffect(() => {
+    if (!pacienteSugerido || precargadoRef.current === pacienteSugerido) return;
+    const encontrado = todosPacientes.find((p) => p.id === pacienteSugerido);
+    if (encontrado) {
+      setPacienteSeleccionado(encontrado);
+      precargadoRef.current = pacienteSugerido;
+    }
+  }, [pacienteSugerido, todosPacientes]);
 
   const pacientesFiltrados = todosPacientes.filter((p) =>
     p.nombre?.toLowerCase().includes(busqueda.toLowerCase())

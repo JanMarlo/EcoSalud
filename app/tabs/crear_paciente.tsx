@@ -32,6 +32,8 @@ import Svg, {
   LinearGradient as SvgLinearGradient,
 } from "react-native-svg";
 import { db } from "../../firebase";
+import { evaluarYGuardar } from "../../lib/agente/persistencia";
+import { sintomasData } from "../../lib/catalogoSintomas";
 
 const { width } = Dimensions.get("window");
 const HEADER_HEIGHT = 200;
@@ -93,136 +95,7 @@ export default function NuevoRegistro() {
   const [busquedaSintoma, setBusquedaSintoma] = useState("");
   const guardandoRef = useRef(false);
 
-  const sintomasData = {
-    Generales: [
-      "Fiebre",
-      "Escalofríos",
-      "Fatiga",
-      "Debilidad",
-      "Pérdida de peso involuntaria",
-      "Aumento de peso",
-      "Sudoración nocturna",
-      "Malestar general",
-      "Pérdida de apetito",
-      "Deshidratación",
-    ],
-    Neurológicos: [
-      "Dolor de cabeza",
-      "Migraña",
-      "Mareo",
-      "Vértigo",
-      "Desmayo",
-      "Convulsiones",
-      "Confusión",
-      "Hormigueo",
-      "Temblores",
-      "Entumecimiento",
-      "Alteración del habla",
-      "Alteración visual",
-      "Sensibilidad a la luz",
-    ],
-    Cardiovasculares: [
-      "Dolor en el pecho",
-      "Palpitaciones",
-      "Taquicardia",
-      "Dificultad para respirar",
-      "Hinchazón en piernas",
-      "Presión arterial elevada",
-      "Presión baja",
-      "Cianosis",
-      "Dolor irradiado a brazo",
-    ],
-    Respiratorios: [
-      "Tos seca",
-      "Tos con flema",
-      "Congestión nasal",
-      "Dolor de garganta",
-      "Secreción nasal",
-      "Dolor al respirar",
-      "Sibilancias",
-      "Ronquera",
-      "Expectoración con sangre",
-    ],
-    Gastrointestinales: [
-      "Náuseas",
-      "Vómitos",
-      "Diarrea",
-      "Estreñimiento",
-      "Dolor abdominal",
-      "Distensión abdominal",
-      "Acidez",
-      "Reflujo",
-      "Sangrado rectal",
-      "Heces oscuras",
-      "Pérdida de apetito",
-      "Ictericia",
-    ],
-    Genitourinarios: [
-      "Ardor al orinar",
-      "Orina frecuente",
-      "Dolor pélvico",
-      "Sangrado urinario",
-      "Flujo vaginal anormal",
-      "Dolor testicular",
-      "Disfunción eréctil",
-      "Amenorrea",
-      "Dolor menstrual",
-      "Embarazo sospechado",
-    ],
-    Musculoesqueléticos: [
-      "Dolor muscular",
-      "Dolor articular",
-      "Rigidez",
-      "Inflamación",
-      "Calambres",
-      "Espasmos",
-      "Dolor lumbar",
-      "Dolor cervical",
-    ],
-    Dermatológicos: [
-      "Erupción",
-      "Comezón",
-      "Enrojecimiento",
-      "Lesiones cutáneas",
-      "Moretones fáciles",
-      "Caída de cabello",
-      "Uñas frágiles",
-      "Cambio de coloración",
-      "Hinchazón facial",
-    ],
-    Psiquiátricos: [
-      "Ansiedad",
-      "Depresión",
-      "Insomnio",
-      "Irritabilidad",
-      "Ataques de pánico",
-      "Cambios de humor",
-      "Pérdida de interés",
-    ],
-    Oculares: [
-      "Visión borrosa",
-      "Dolor ocular",
-      "Lagrimeo",
-      "Fotofobia",
-      "Secreción ocular",
-      "Ojos rojos",
-    ],
-    Otorrinolaringológicos: [
-      "Dolor de oído",
-      "Zumbido",
-      "Pérdida auditiva",
-      "Dolor facial",
-      "Dificultad para tragar",
-    ],
-    Endocrino: [
-      "Sed excesiva",
-      "Hambre excesiva",
-      "Micción frecuente",
-      "Intolerancia al frío",
-      "Intolerancia al calor",
-      "Cambios hormonales",
-    ],
-  };
+  // Catálogo movido a lib/catalogoSintomas.ts (lo comparte el agente de IA)
 
   const HeaderOla = ({
     titulo,
@@ -746,7 +619,22 @@ export default function NuevoRegistro() {
 
       await batch.commit();
 
-      Alert.alert("Éxito", "Registro guardado correctamente");
+      // 🤖 Agente de IA: evaluar la consulta recién guardada
+      let evaluacionId: string | null = null;
+      try {
+        const resultado = await evaluarYGuardar({
+          consulta: { ...payload, id: refRegistro.id, createdAt: null },
+          registroId: refRegistro.id,
+          uid: user.uid,
+        });
+        evaluacionId = resultado.id;
+      } catch (e) {
+        console.warn("El agente no pudo evaluar la consulta", e);
+      }
+
+      if (!evaluacionId) {
+        Alert.alert("Éxito", "Registro guardado correctamente");
+      }
 
       // 🔥 limpiar TODO
       setPacienteId(null);
@@ -772,7 +660,14 @@ export default function NuevoRegistro() {
       setCitaEstado(null);
 
       setTimeout(() => {
-        router.replace("/tabs/citas");
+        if (evaluacionId) {
+          router.replace({
+            pathname: "/evaluacion",
+            params: { id: evaluacionId, origen: "consulta", deCita: citaId ? "true" : "false" },
+          });
+        } else {
+          router.replace("/tabs/citas");
+        }
       }, 300);
     } catch (error) {
       Alert.alert("Error", "No se pudo guardar el registro");

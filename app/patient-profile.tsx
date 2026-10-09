@@ -32,6 +32,7 @@ import {
   View,
 } from "react-native";
 import { db } from "../firebase";
+import ResumenEvaluacion from "../components/agente/ResumenEvaluacion";
 
 // Logo para el PDF
 const logoImage = require("../assets/images/logo2.png");
@@ -787,6 +788,13 @@ export default function PatientProfile() {
             <Text style={styles.vitalValue}>{paciente.altura} cm</Text>
           </View>
         </View>
+
+        {/* 🤖 AGENTE DE IA */}
+        <ResumenEvaluacion
+          pacienteId={String(id)}
+          consultaActual={paciente}
+          historial={historial}
+        />
 
         <View style={styles.sectionCard}>
           <Text style={styles.sectionTitle}>Síntomas</Text>
