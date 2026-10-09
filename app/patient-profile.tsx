@@ -31,8 +31,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { db } from "../firebase";
 import ResumenEvaluacion from "../components/agente/ResumenEvaluacion";
+import { db } from "../firebase";
 
 // Logo para el PDF
 const logoImage = require("../assets/images/logo2.png");
@@ -107,6 +107,13 @@ export default function PatientProfile() {
   const [historial, setHistorial] = useState<Paciente[]>([]);
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const router = useRouter();
+  const volver = () => {
+  if (router.canGoBack()) {
+    router.back();
+  } else {
+    router.replace("/tabs/pacientes");
+  }
+  };
 
   // ── Compartir paciente ─────────────────────────────────────────────────
   const [mostrarCompartir, setMostrarCompartir] = useState(false);
@@ -339,7 +346,7 @@ export default function PatientProfile() {
               await Promise.all(eliminaciones);
 
               Alert.alert("Eliminado", "Paciente eliminado correctamente");
-              router.back();
+              router.replace("/tabs/pacientes");
             } catch (error) {
               console.error(error);
               Alert.alert("Error", "No se pudo eliminar el paciente");
@@ -713,7 +720,7 @@ export default function PatientProfile() {
           />
           <TouchableOpacity
             style={styles.backButton}
-            onPress={() => router.back()}
+            onPress={volver}
           >
             <Ionicons name="arrow-back" size={28} color="white" />
           </TouchableOpacity>
