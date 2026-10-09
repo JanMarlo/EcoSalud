@@ -16,6 +16,7 @@ import {
   Dimensions,
   FlatList,
   Image,
+  Platform,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -56,7 +57,13 @@ export default function Citas() {
     return (
       <Svg width={width} height={220} viewBox={`0 0 ${width} 220`}>
         <Defs>
-          <SvgLinearGradient id="grad" x1="0" y1="0" x2="1" y2="0">
+          <SvgLinearGradient
+              id="gradCitasHeader"
+              x1="0"
+              y1="0"
+              x2="1"
+              y2="0"
+            >
             <Stop offset="0" stopColor="#1E5FA8" stopOpacity="1" />
             <Stop offset="1" stopColor="#2FA4D6" stopOpacity="1" />
           </SvgLinearGradient>
@@ -65,7 +72,7 @@ export default function Citas() {
           d={`M0 0 H${width} V150 C${width} 150 ${width * 0.7} 220 ${
             width * 0.5
           } 180 C${width * 0.3} 140 0 200 0 200 V0 Z`}
-          fill="url(#grad)"
+          fill="url(#gradCitasHeader)"
         />
       </Svg>
     );
@@ -514,12 +521,12 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   calendarContainer: {
-    backgroundColor: "#fff",
-    borderRadius: 22,
-    paddingTop: 14,
-    marginTop: -60,
-    paddingBottom: 16,
-    paddingHorizontal: 16,
+  backgroundColor: "#fff",
+  borderRadius: 22,
+  paddingTop: 14,
+  marginTop: Platform.OS === "web" ? 0 : -60,
+  paddingBottom: 16,
+  paddingHorizontal: 16,
   },
   calendarWrapper: {
     borderRadius: 16,
